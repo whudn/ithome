@@ -217,6 +217,17 @@
         const currentMain = document.querySelector('main#app');
         if (newMain && currentMain) {
           currentMain.innerHTML = newMain.innerHTML;
+          // Execute scripts
+          const scripts = newMain.querySelectorAll('script');
+          scripts.forEach(script => {
+            if (script.src) {
+              const newScript = document.createElement('script');
+              newScript.src = script.src;
+              document.head.appendChild(newScript);
+            } else {
+              eval(script.textContent);
+            }
+          });
           // Update title
           const t = doc.querySelector('title');
           if (t) document.title = t.textContent;

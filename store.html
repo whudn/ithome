@@ -286,6 +286,217 @@
         </div>
       </div>
     </section>
+
+    <!-- PRODUCT MODAL -->
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 id="modalProductName" class="text-3xl font-bold mb-2">Product Name</h2>
+            <p id="modalProductDesc" class="text-gray-600">Product description</p>
+          </div>
+          <button onclick="closeProductModal()" class="text-2xl font-bold text-gray-400 hover:text-gray-600">×</button>
+        </div>
+
+        <div class="border-t border-b border-gray-200 py-6 mb-6">
+          <div class="mb-6">
+            <p class="text-sm text-gray-500 mb-2">HARGA SATUAN</p>
+            <div id="modalProductPrice" class="text-4xl font-bold">Rp 0</div>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500 mb-3">JUMLAH LISENSI</p>
+            <div class="quantity-selector">
+              <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
+              <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" onchange="updateTotal()">
+              <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-sm text-gray-500 mb-2">TOTAL PEMBAYARAN</p>
+          <div id="modalTotal" class="text-3xl font-bold">Rp 0</div>
+        </div>
+
+        <form id="checkoutForm" onsubmit="submitCheckout(event)" class="space-y-4">
+          <input type="text" id="customerName" placeholder="Nama Lengkap" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+          <input type="email" id="customerEmail" placeholder="Email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+          <input type="tel" id="customerPhone" placeholder="Nomor WhatsApp" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+          <button type="submit" class="w-full btn-pill bg-black text-white hover:bg-gray-800 text-center" style="padding: 16px;">Checkout & Hubungi Admin</button>
+        </form>
+
+        <p class="text-xs text-gray-400 text-center mt-4">Setelah checkout, admin akan menghubungi Anda via WhatsApp untuk konfirmasi pembayaran dan pengiriman lisensi.</p>
+      </div>
+    </div>
+
+    <!-- PRODUCT MODAL SCRIPT -->
+    <script>
+      let currentProduct = {
+        id: '',
+        name: '',
+        price: 0
+      };
+
+      function openProductModal(productId, productName, productPrice, productDesc) {
+        currentProduct = { id: productId, name: productName, price: productPrice };
+        document.getElementById('modalProductName').textContent = productName;
+        document.getElementById('modalProductDesc').textContent = productDesc;
+        document.getElementById('modalProductPrice').textContent = 'Rp ' + productPrice.toLocaleString('id-ID');
+        document.getElementById('quantityInput').value = 1;
+        updateTotal();
+        document.getElementById('productModal').classList.add('active');
+        document.body.classList.add('modal-open');
+      }
+
+      function closeProductModal() {
+        document.getElementById('productModal').classList.remove('active');
+        document.body.classList.remove('modal-open');
+        document.getElementById('checkoutForm').reset();
+      }
+
+      function increaseQuantity() {
+        const input = document.getElementById('quantityInput');
+        input.value = parseInt(input.value) + 1;
+        updateTotal();
+      }
+
+      function decreaseQuantity() {
+        const input = document.getElementById('quantityInput');
+        if (parseInt(input.value) > 1) {
+          input.value = parseInt(input.value) - 1;
+          updateTotal();
+        }
+      }
+
+      function updateTotal() {
+        const quantity = parseInt(document.getElementById('quantityInput').value);
+        const total = currentProduct.price * quantity;
+        document.getElementById('modalTotal').textContent = 'Rp ' + total.toLocaleString('id-ID');
+      }
+
+      function submitCheckout(e) {
+        e.preventDefault();
+        const name = document.getElementById('customerName').value;
+        const email = document.getElementById('customerEmail').value;
+        const phone = document.getElementById('customerPhone').value;
+        const quantity = document.getElementById('quantityInput').value;
+        const total = currentProduct.price * quantity;
+
+        // Prepare WhatsApp message
+        const message = `Halo, saya ingin checkout:
+  Product: ${currentProduct.name}
+  Jumlah: ${quantity}
+  Total: Rp ${total.toLocaleString('id-ID')}
+  Nama: ${name}
+  Email: ${email}
+  No. WhatsApp: ${phone}`;
+
+        // Open WhatsApp with pre-filled message
+        const whatsappLink = 'https://wa.me/?text=' + encodeURIComponent(message);
+        window.open(whatsappLink, '_blank');
+
+        // Close modal and reset form
+        closeProductModal();
+        document.getElementById('checkoutForm').reset();
+      }
+
+      // Close modal when clicking outside
+      window.addEventListener('click', function(e) {
+        const modal = document.getElementById('productModal');
+        if (e.target === modal) {
+          closeProductModal();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeProductModal();
+        }
+      });
+    </script>
+
+    <!-- Simple SPA loader (PJAX-like) -->
+    <script>
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Close menu when clicking a link
+      mobileMenu.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+
+      // Intercept clicks with [data-spa] to fetch target page and swap <main>
+      const supportsSPA = !!window.history && !!window.fetch && !!window.DOMParser;
+      if (supportsSPA) {
+        const parser = new DOMParser();
+
+        function swapContent(html, url) {
+          const doc = parser.parseFromString(html, 'text/html');
+          const newMain = doc.querySelector('main#app');
+          const currentMain = document.querySelector('main#app');
+          if (newMain && currentMain) {
+            currentMain.innerHTML = newMain.innerHTML;
+            // Execute scripts
+            const scripts = newMain.querySelectorAll('script');
+            scripts.forEach(script => {
+              if (script.src) {
+                const newScript = document.createElement('script');
+                newScript.src = script.src;
+                document.head.appendChild(newScript);
+              } else {
+                eval(script.textContent);
+              }
+            });
+            // Update title
+            const t = doc.querySelector('title');
+            if (t) document.title = t.textContent;
+            // Push history
+            history.pushState({ _spa: true }, t ? t.textContent : '', url);
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            // Fallback to full navigation
+            window.location.href = url;
+          }
+        }
+
+        async function handleClick(e) {
+          const link = e.target.closest('a[data-spa]');
+          if (!link) return;
+          const url = link.getAttribute('href');
+          // Only intercept same-origin relative html files
+          if (!url || !url.endsWith('.html')) return;
+          e.preventDefault();
+          try {
+            const res = await fetch(url, { headers: { 'X-SLAB-SPA': '1' } });
+            if (!res.ok) throw new Error('Network error');
+            const html = await res.text();
+            swapContent(html, url);
+          } catch (err) {
+            console.error('[SPA] Fallback:', err);
+            window.location.href = url;
+          }
+        }
+
+        document.addEventListener('click', handleClick);
+        window.addEventListener('popstate', async (e) => {
+          // Handle back/forward: re-fetch current URL
+          try {
+            const res = await fetch(location.pathname);
+            const html = await res.text();
+            swapContent(html, location.pathname);
+          } catch (_) {}
+        });
+      }
+    </script>
   </main>
 
   <footer class="bg-black text-white py-20 px-10 mt-20">
@@ -307,202 +518,8 @@
     </div>
   </footer>
 
-  <!-- PRODUCT MODAL -->
-  <div id="productModal" class="modal">
-    <div class="modal-content">
-      <div class="flex justify-between items-start mb-6">
-        <div>
-          <h2 id="modalProductName" class="text-3xl font-bold mb-2">Product Name</h2>
-          <p id="modalProductDesc" class="text-gray-600">Product description</p>
-        </div>
-        <button onclick="closeProductModal()" class="text-2xl font-bold text-gray-400 hover:text-gray-600">×</button>
-      </div>
 
-      <div class="border-t border-b border-gray-200 py-6 mb-6">
-        <div class="mb-6">
-          <p class="text-sm text-gray-500 mb-2">HARGA SATUAN</p>
-          <div id="modalProductPrice" class="text-4xl font-bold">Rp 0</div>
-        </div>
 
-        <div>
-          <p class="text-sm text-gray-500 mb-3">JUMLAH LISENSI</p>
-          <div class="quantity-selector">
-            <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
-            <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" onchange="updateTotal()">
-            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
-          </div>
-        </div>
-      </div>
 
-      <div class="mb-6">
-        <p class="text-sm text-gray-500 mb-2">TOTAL PEMBAYARAN</p>
-        <div id="modalTotal" class="text-3xl font-bold">Rp 0</div>
-      </div>
 
-      <form id="checkoutForm" onsubmit="submitCheckout(event)" class="space-y-4">
-        <input type="text" id="customerName" placeholder="Nama Lengkap" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <input type="email" id="customerEmail" placeholder="Email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <input type="tel" id="customerPhone" placeholder="Nomor WhatsApp" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <button type="submit" class="w-full btn-pill bg-black text-white hover:bg-gray-800 text-center" style="padding: 16px;">Checkout & Hubungi Admin</button>
-      </form>
 
-      <p class="text-xs text-gray-400 text-center mt-4">Setelah checkout, admin akan menghubungi Anda via WhatsApp untuk konfirmasi pembayaran dan pengiriman lisensi.</p>
-    </div>
-  </div>
-
-  <!-- Simple SPA loader (PJAX-like) -->
-  <script>
-    // Mobile menu toggle
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenuButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-
-    // Close menu when clicking a link
-    mobileMenu.addEventListener('click', (e) => {
-      if (e.target.tagName === 'A') {
-        mobileMenu.classList.add('hidden');
-      }
-    });
-
-    // Intercept clicks with [data-spa] to fetch target page and swap <main>
-    const supportsSPA = !!window.history && !!window.fetch && !!window.DOMParser;
-    if (supportsSPA) {
-      const parser = new DOMParser();
-
-      function swapContent(html, url) {
-        const doc = parser.parseFromString(html, 'text/html');
-        const newMain = doc.querySelector('main#app');
-        const currentMain = document.querySelector('main#app');
-        if (newMain && currentMain) {
-          currentMain.innerHTML = newMain.innerHTML;
-          // Update title
-          const t = doc.querySelector('title');
-          if (t) document.title = t.textContent;
-          // Push history
-          history.pushState({ _spa: true }, t ? t.textContent : '', url);
-          // Scroll to top smoothly
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // Fallback to full navigation
-          window.location.href = url;
-        }
-      }
-
-      async function handleClick(e) {
-        const link = e.target.closest('a[data-spa]');
-        if (!link) return;
-        const url = link.getAttribute('href');
-        // Only intercept same-origin relative html files
-        if (!url || !url.endsWith('.html')) return;
-        e.preventDefault();
-        try {
-          const res = await fetch(url, { headers: { 'X-SLAB-SPA': '1' } });
-          if (!res.ok) throw new Error('Network error');
-          const html = await res.text();
-          swapContent(html, url);
-        } catch (err) {
-          console.error('[SPA] Fallback:', err);
-          window.location.href = url;
-        }
-      }
-
-      document.addEventListener('click', handleClick);
-      window.addEventListener('popstate', async (e) => {
-        // Handle back/forward: re-fetch current URL
-        try {
-          const res = await fetch(location.pathname);
-          const html = await res.text();
-          swapContent(html, location.pathname);
-        } catch (_) {}
-      });
-    }
-  </script>
-
-  <!-- PRODUCT MODAL SCRIPT -->
-  <script>
-    let currentProduct = {
-      id: '',
-      name: '',
-      price: 0
-    };
-
-    function openProductModal(productId, productName, productPrice, productDesc) {
-      currentProduct = { id: productId, name: productName, price: productPrice };
-      document.getElementById('modalProductName').textContent = productName;
-      document.getElementById('modalProductDesc').textContent = productDesc;
-      document.getElementById('modalProductPrice').textContent = 'Rp ' + productPrice.toLocaleString('id-ID');
-      document.getElementById('quantityInput').value = 1;
-      updateTotal();
-      document.getElementById('productModal').classList.add('active');
-      document.body.classList.add('modal-open');
-    }
-
-    function closeProductModal() {
-      document.getElementById('productModal').classList.remove('active');
-      document.body.classList.remove('modal-open');
-      document.getElementById('checkoutForm').reset();
-    }
-
-    function increaseQuantity() {
-      const input = document.getElementById('quantityInput');
-      input.value = parseInt(input.value) + 1;
-      updateTotal();
-    }
-
-    function decreaseQuantity() {
-      const input = document.getElementById('quantityInput');
-      if (parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
-        updateTotal();
-      }
-    }
-
-    function updateTotal() {
-      const quantity = parseInt(document.getElementById('quantityInput').value);
-      const total = currentProduct.price * quantity;
-      document.getElementById('modalTotal').textContent = 'Rp ' + total.toLocaleString('id-ID');
-    }
-
-    function submitCheckout(e) {
-      e.preventDefault();
-      const name = document.getElementById('customerName').value;
-      const email = document.getElementById('customerEmail').value;
-      const phone = document.getElementById('customerPhone').value;
-      const quantity = document.getElementById('quantityInput').value;
-      const total = currentProduct.price * quantity;
-
-      // Prepare WhatsApp message
-      const message = `Halo, saya ingin checkout:
-Product: ${currentProduct.name}
-Jumlah: ${quantity}
-Total: Rp ${total.toLocaleString('id-ID')}
-Nama: ${name}
-Email: ${email}
-No. WhatsApp: ${phone}`;
-
-      // Open WhatsApp with pre-filled message
-      const whatsappLink = 'https://wa.me/?text=' + encodeURIComponent(message);
-      window.open(whatsappLink, '_blank');
-
-      // Close modal and reset form
-      closeProductModal();
-      document.getElementById('checkoutForm').reset();
-    }
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-      const modal = document.getElementById('productModal');
-      if (e.target === modal) {
-        closeProductModal();
-      }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeProductModal();
-      }
-    });
-  </script>

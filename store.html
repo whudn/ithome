@@ -1,39 +1,195 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Store — S/LAB</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+    rel="stylesheet">
   <style>
-    :root { --bg-color:#ffffff; --card-bg:#f8f8f8; }
-    body { font-family:'Plus Jakarta Sans',sans-serif; background-color:var(--bg-color); color:#111; scroll-behavior:smooth; }
-    body { background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='8' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Ccircle cx='60' cy='60' r='8' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Cline x1='0' y1='40' x2='80' y2='40' stroke='%23000' stroke-width='1'/%3E%3Cline x1='40' y1='0' x2='40' y2='80' stroke='%23000' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E"); background-attachment:fixed; }
-    body.modal-open { overflow: hidden; padding-right: 17px; }
-    .bento-card { background:var(--card-bg); border-radius:32px; padding:40px; transition:all .4s cubic-bezier(0.23,1,0.32,1); border:1px solid transparent; }
-    .bento-card:hover { background:#fff; border-color:#eee; transform:translateY(-5px); box-shadow:0 20px 40px rgba(0,0,0,.05); cursor:pointer; }
-    .text-huge { font-size:clamp(3rem,10vw,8rem); line-height:.85; letter-spacing:-.05em; }
-    .btn-pill { padding:12px 28px; border-radius:999px; font-weight:600; transition:all .3s; }
-    @keyframes marquee { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
-    .animate-marquee { animation:marquee 20s linear infinite; }
-    .license-badge { display:inline-block; padding:8px 16px; background:#f0f0f0; border-radius:20px; font-size:12px; font-weight:600; }
-    .license-price { font-size:24px; font-weight:800; color:#000; }
-    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); overflow-y:auto; }
-    .modal.active { display:flex; align-items:center; justify-content:center; }
-    .modal-content { background:white; border-radius:32px; padding:40px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; animation:slideUp .3s ease-out; margin:auto; }
-    .modal-content::-webkit-scrollbar { width:6px; }
-    .modal-content::-webkit-scrollbar-track { background:transparent; }
-    .modal-content::-webkit-scrollbar-thumb { background:#d0d0d0; border-radius:3px; }
-    .modal-content::-webkit-scrollbar-thumb:hover { background:#a0a0a0; }
-    @keyframes slideUp { from { transform:translateY(30px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-    .quantity-selector { display:flex; align-items:center; gap:12px; border:2px solid #e5e5e5; border-radius:12px; width:fit-content; padding:8px; }
-    .quantity-btn { width:32px; height:32px; border:none; background:#f0f0f0; border-radius:8px; cursor:pointer; font-weight:600; transition:all .2s; }
-    .quantity-btn:hover { background:#e0e0e0; }
-    .quantity-input { width:50px; border:none; text-align:center; font-size:16px; font-weight:600; }
-    .quantity-input:focus { outline:none; }
+    :root {
+      --bg-color: #ffffff;
+      --card-bg: #f8f8f8;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: #111;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='8' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Ccircle cx='60' cy='60' r='8' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Cline x1='0' y1='40' x2='80' y2='40' stroke='%23000' stroke-width='1'/%3E%3Cline x1='40' y1='0' x2='40' y2='80' stroke='%23000' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+      padding-right: 17px;
+    }
+
+    .bento-card {
+      background: var(--card-bg);
+      border-radius: 32px;
+      padding: 40px;
+      transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
+      border: 1px solid transparent;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .05);
+      cursor: pointer;
+    }
+
+    .bento-card:not(.dark-card):hover {
+      background: #fff;
+      border-color: #eee;
+    }
+
+    .text-huge {
+      font-size: clamp(3rem, 10vw, 8rem);
+      line-height: .85;
+      letter-spacing: -.05em;
+    }
+
+    .btn-pill {
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      transition: all .3s;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(100%);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .animate-marquee {
+      animation: marquee 20s linear infinite;
+    }
+
+    .license-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .license-price {
+      font-size: 24px;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 32px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp .3s ease-out;
+      margin: auto;
+    }
+
+    .modal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: #d0d0d0;
+      border-radius: 3px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: #a0a0a0;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      width: fit-content;
+      padding: 8px;
+    }
+
+    .quantity-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #f0f0f0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .2s;
+    }
+
+    .quantity-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .quantity-input {
+      width: 50px;
+      border: none;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .quantity-input:focus {
+      outline: none;
+    }
   </style>
 </head>
+
 <body class="antialiased">
   <!-- NEWS BAR -->
   <div class="fixed top-0 w-full z-[60] bg-black text-white overflow-hidden">
@@ -62,7 +218,8 @@
     </button>
   </nav>
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-90 z-40 hidden md:hidden flex flex-col justify-center items-center space-y-8 text-white text-lg uppercase tracking-widest font-bold">
+  <div id="mobile-menu"
+    class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-90 z-40 hidden md:hidden flex flex-col justify-center items-center space-y-8 text-white text-lg uppercase tracking-widest font-bold">
     <a href="services.html" class="hover:opacity-50" data-spa>Layanan</a>
     <a href="store.html" class="hover:opacity-50" data-spa>Store</a>
     <a href="about.html" class="hover:opacity-50" data-spa>Tentang</a>
@@ -72,9 +229,12 @@
     <!-- HERO -->
     <section class="min-h-[50vh] flex flex-col justify-center px-6 md:px-12 pt-32">
       <div class="max-w-7xl mx-auto w-full">
-        <span class="inline-block mb-6 px-4 py-1 border border-black rounded-full text-xs font-bold uppercase tracking-widest">Lisensi Resmi</span>
+        <span
+          class="inline-block mb-6 px-4 py-1 border border-black rounded-full text-xs font-bold uppercase tracking-widest">Lisensi
+          Resmi</span>
         <h1 class="text-5xl md:text-6xl font-extrabold mb-4">Software Store</h1>
-        <p class="text-gray-500 text-lg max-w-2xl">Koleksi lengkap lisensi original untuk sistem operasi, produktivitas, dan keamanan digital dengan harga terjangkau.</p>
+        <p class="text-gray-500 text-lg max-w-2xl">Koleksi lengkap lisensi original untuk sistem operasi, produktivitas,
+          dan keamanan digital dengan harga terjangkau.</p>
       </div>
     </section>
 
@@ -82,174 +242,190 @@
     <section class="max-w-7xl mx-auto px-6 pb-24">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <!-- WINDOWS LICENSES -->
-        <div class="bento-card md:col-span-4" onclick="openProductModal('windows-11', 'Windows 11 Pro', 599000, 'Lisensi resmi OEM Windows 11 Professional dengan aktivasi seumur hidup. Termasuk dukungan teknis dan panduan instalasi lengkap.')">
+        <div class="bento-card md:col-span-4"
+          onclick="openProductModal('windows-11', 'Windows 11 Pro', 55000, 'Lisensi key Windows 11 Professional. Termasuk dukungan teknis dan panduan instalasi lengkap.')">
           <div class="mb-6">
             <div class="w-12 h-12 bg-blue-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Windows 11 Pro</h3>
-            <p class="text-gray-600 text-sm mb-4">Lisensi resmi OEM dengan aktivasi seumur hidup</p>
-            <div class="license-price">Rp 599.000</div>
+            <p class="text-gray-600 text-sm mb-4">Lisensi key</p>
+            <div class="license-price">Rp 55.000</div>
           </div>
           <div class="text-sm font-bold text-blue-600">Pilih Sekarang →</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('windows-10', 'Windows 10 Pro', 499000, 'Lisensi original Windows 10 Professional dengan support resmi Microsoft. Dapat di-upgrade ke Windows 11 kapan saja.')">
+        <div class="bento-card md:col-span-4"
+          onclick="openProductModal('windows-10', 'Windows 10 Pro', 50000, 'Lisensi Windows 10 Professional. Dapat di-upgrade ke Windows 11 kapan saja.')">
           <div class="mb-6">
             <div class="w-12 h-12 bg-blue-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Windows 10 Pro</h3>
-            <p class="text-gray-600 text-sm mb-4">Lisensi original dengan support resmi Microsoft</p>
-            <div class="license-price">Rp 499.000</div>
+            <p class="text-gray-600 text-sm mb-4">Lisensi Key</p>
+            <div class="license-price">Rp 50.000</div>
           </div>
           <div class="text-sm font-bold text-blue-600">Pilih Sekarang →</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('office-365', 'Office 365', 349000, 'Paket tahunan Microsoft Office 365 mencakup Word, Excel, PowerPoint, dan penyimpanan cloud OneDrive unlimited.')">
+        <div class="bento-card md:col-span-4"
+          onclick="openProductModal('office-2024', 'Office 2024 Professional Plus', 60000, 'Paket Microsoft Office 2024 Professional Plus mencakup Word, Excel, PowerPoint, dan Outlook.')">
           <div class="mb-6">
             <div class="w-12 h-12 bg-blue-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold mb-2">Office 365</h3>
-            <p class="text-gray-600 text-sm mb-4">Paket tahunan Word, Excel, PowerPoint & Cloud</p>
-            <div class="license-price">Rp 349.000</div>
+            <h3 class="text-2xl font-bold mb-2">Office 2024 Professional Plus </h3>
+            <p class="text-gray-600 text-sm mb-4">Paket Microsoft Office & Outlook</p>
+            <div class="license-price">Rp 60.000</div>
           </div>
           <div class="text-sm font-bold text-blue-600">Pilih Sekarang →</div>
         </div>
 
         <!-- SECURITY & UTILITY -->
-        <div class="bento-card md:col-span-4" onclick="openProductModal('kaspersky', 'Kaspersky Internet Security', 249000, 'Antivirus dan firewall premium dengan deteksi ancaman real-time. Lisensi 1 tahun untuk 3 perangkat.')">
+        <div class="bento-card md:col-span-4"
+          onclick="openProductModal('nitro-pdf', 'Nitro PDF Pro', 45000, 'Solusi lengkap untuk membuat, mengedit, tanda tangan, dan konversi file PDF. Lisensi permanen untuk 1 PC.')">
           <div class="mb-6">
             <div class="w-12 h-12 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                <path
+                  d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z" />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold mb-2">Kaspersky Internet Security</h3>
-            <p class="text-gray-600 text-sm mb-4">Antivirus & firewall premium 1 tahun 3 device</p>
-            <div class="license-price">Rp 249.000</div>
+            <h3 class="text-2xl font-bold mb-2">Nitro PDF Pro</h3>
+            <p class="text-gray-600 text-sm mb-4">Edit, convert, dan amankan file PDF dengan mudah</p>
+            <div class="license-price">Rp 45.000</div>
           </div>
           <div class="text-sm font-bold text-red-600">Pilih Sekarang →</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('discord-nitro', 'Discord Nitro', 119000, 'Premium membership Discord 1 bulan dengan boost server gratis, emoji custom, dan streaming dalam kualitas 4K.')">
+        <div class="bento-card md:col-span-4 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-yellow-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Discord Nitro</h3>
             <p class="text-gray-600 text-sm mb-4">Premium membership 1 bulan + boost gratis</p>
-            <div class="license-price">Rp 119.000</div>
+            <div class="license-price blur-sm select-none">Rp 119.000</div>
           </div>
-          <div class="text-sm font-bold text-yellow-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis (Restock Soon)</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('winrar', 'WinRAR 7', 149000, 'Lisensi seumur hidup WinRAR 7 untuk kompres, ekstrak, dan manage file archive dengan mudah dan cepat.')">
+        <div class="bento-card md:col-span-4"
+          onclick="openProductModal('winrar', 'WinRAR', 15000, 'Lisensi seumur hidup WinRAR untuk kompres, ekstrak, dan manage file archive dengan mudah dan cepat.')">
           <div class="mb-6">
             <div class="w-12 h-12 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold mb-2">WinRAR 7</h3>
-            <p class="text-gray-600 text-sm mb-4">Lisensi seumur hidup untuk kompres & ekstrak file</p>
-            <div class="license-price">Rp 149.000</div>
+            <h3 class="text-2xl font-bold mb-2">WinRAR</h3>
+            <p class="text-gray-600 text-sm mb-4">Lisensi key file</p>
+            <div class="license-price">Rp 15.000</div>
           </div>
           <div class="text-sm font-bold text-red-600">Pilih Sekarang →</div>
         </div>
 
         <!-- PRODUCTIVITY -->
-        <div class="bento-card md:col-span-6" onclick="openProductModal('adobe-cc', 'Adobe Creative Cloud', 1299000, 'Akses ke semua aplikasi Adobe Professional termasuk Photoshop, Illustrator, Premiere Pro, After Effects, dan lebih banyak lagi. Lisensi 1 tahun.')">
+        <div class="bento-card md:col-span-6 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-purple-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Adobe Creative Cloud</h3>
             <p class="text-gray-600 text-sm mb-4">Photoshop, Illustrator, Premiere Pro & semua apps 1 tahun</p>
-            <div class="license-price">Rp 1.299.000</div>
+            <div class="license-price blur-sm select-none">Rp 1.299.000</div>
           </div>
-          <div class="text-sm font-bold text-purple-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis (Restock Soon)</div>
         </div>
 
-        <div class="bento-card md:col-span-6" onclick="openProductModal('jetbrains', 'Jetbrains All Products', 899000, 'Paket lengkap IDE profesional Jetbrains termasuk IntelliJ IDEA, PyCharm, WebStorm, dan semua IDE lainnya. Lisensi 1 tahun.')">
+        <div class="bento-card md:col-span-6 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-green-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                <path
+                  d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Jetbrains All Products</h3>
             <p class="text-gray-600 text-sm mb-4">IDE profesional untuk developer (IntelliJ, PyCharm, dll) 1 tahun</p>
-            <div class="license-price">Rp 899.000</div>
+            <div class="license-price blur-sm select-none">Rp 899.000</div>
           </div>
-          <div class="text-sm font-bold text-green-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis (Restock Soon)</div>
         </div>
 
         <!-- FEATURED BUNDLE -->
-        <div class="bento-card md:col-span-12 bg-gradient-to-r from-gray-900 to-black !text-white" onclick="openProductModal('bundle-essentials', 'Bundle Essentials', 1899000, 'Paket hemat lengkap untuk kebutuhan dasar: Windows 11 Pro, Office 365, Kaspersky Internet Security, dan WinRAR 7 dengan diskon 25%!')">
+        <div
+          class="bento-card dark-card md:col-span-12 bg-gradient-to-r from-gray-900 to-black text-white hover:from-white hover:to-white hover:text-black hover:border-black/5"
+          onclick="openProductModal('bundle-win-office', 'Bundle Windows + Office', 85000, 'Paket hemat Windows 11 Pro dan Office 2024 Professional Plus. Lisensi original dengan garansi aktivasi.')">
           <div class="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <span class="inline-block mb-4 px-4 py-2 bg-yellow-400 text-black text-xs font-bold rounded-full">PAKET HEMAT</span>
-              <h3 class="text-3xl font-bold mb-2">Bundle Essentials</h3>
-              <p class="opacity-70 max-w-xl mb-4">Windows 11 Pro + Office 365 + Kaspersky + WinRAR dengan diskon 25%</p>
-              <div class="text-4xl font-bold">Rp 1.899.000 <span class="text-lg line-through opacity-50">Rp 2.499.000</span></div>
+              <span class="inline-block mb-4 px-4 py-2 bg-blue-500 text-white text-xs font-bold rounded-full">BEST
+                SELLER</span>
+              <h3 class="text-3xl font-bold mb-2">Bundle Windows + Office</h3>
+              <p class="opacity-70 max-w-xl mb-4">Windows 11 Pro Original + Office 2024 Pro Plus dengan harga spesial.
+              </p>
+              <div class="text-4xl font-bold">Rp 85.000 <span class="text-lg line-through opacity-50">Rp
+                  115.000</span></div>
             </div>
             <div class="text-sm font-bold">Pilih Sekarang →</div>
           </div>
         </div>
 
         <!-- ADDITIONAL LICENSES -->
-        <div class="bento-card md:col-span-4" onclick="openProductModal('spotify', 'Spotify Premium', 54000, 'Layanan streaming musik tanpa batas dengan jutaan lagu dari artis di seluruh dunia. Lisensi 1 bulan.')">
+        <div class="bento-card md:col-span-4 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-indigo-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Spotify Premium</h3>
             <p class="text-gray-600 text-sm mb-4">Streaming musik tanpa batas 1 bulan</p>
-            <div class="license-price">Rp 54.000</div>
+            <div class="license-price blur-sm select-none">Rp 54.000</div>
           </div>
-          <div class="text-sm font-bold text-indigo-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('lightroom', 'Adobe Lightroom', 349000, 'Software editing foto cloud-based Lightroom dengan Photoshop included. Lisensi 1 tahun.')">
+        <div class="bento-card md:col-span-4 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-pink-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-2.08-2.71c-.23-.29-.62-.29-.85 0l-2.13 2.71h15.15L12.04 6.6c-.23-.29-.62-.29-.85 0z"/>
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-2.08-2.71c-.23-.29-.62-.29-.85 0l-2.13 2.71h15.15L12.04 6.6c-.23-.29-.62-.29-.85 0z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Adobe Lightroom</h3>
             <p class="text-gray-600 text-sm mb-4">Editing foto cloud-based dengan Photoshop 1 tahun</p>
-            <div class="license-price">Rp 349.000</div>
+            <div class="license-price blur-sm select-none">Rp 349.000</div>
           </div>
-          <div class="text-sm font-bold text-pink-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis</div>
         </div>
 
-        <div class="bento-card md:col-span-4" onclick="openProductModal('canva', 'Canva Pro', 249000, 'Tools desain grafis lengkap dengan jutaan template premium dan assets gratis. Lisensi 1 tahun.')">
+        <div class="bento-card md:col-span-4 opacity-50 pointer-events-none">
           <div class="mb-6">
             <div class="w-12 h-12 bg-orange-100 rounded-lg mb-4 flex items-center justify-center">
               <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5-7c0-1.66-1.34-3-3-3s-3 1.34-3 3 1.34 3 3 3 3-1.34 3-3z"/>
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5-7c0-1.66-1.34-3-3-3s-3 1.34-3 3 1.34 3 3 3 3-1.34 3-3z" />
               </svg>
             </div>
             <h3 class="text-2xl font-bold mb-2">Canva Pro</h3>
             <p class="text-gray-600 text-sm mb-4">Design tools unlimited dengan template premium 1 tahun</p>
-            <div class="license-price">Rp 249.000</div>
+            <div class="license-price blur-sm select-none">Rp 249.000</div>
           </div>
-          <div class="text-sm font-bold text-orange-600">Pilih Sekarang →</div>
+          <div class="text-sm font-bold text-gray-400">Stok Habis</div>
         </div>
       </div>
     </section>
@@ -260,7 +436,7 @@
         <div class="bento-card">
           <div class="w-12 h-12 bg-green-100 rounded-lg mb-4 flex items-center justify-center">
             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
             </svg>
           </div>
           <h3 class="text-xl font-bold mb-2">Lisensi 100% Original</h3>
@@ -269,7 +445,8 @@
         <div class="bento-card">
           <div class="w-12 h-12 bg-blue-100 rounded-lg mb-4 flex items-center justify-center">
             <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+              <path
+                d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
             </svg>
           </div>
           <h3 class="text-xl font-bold mb-2">Aktivasi Seumur Hidup</h3>
@@ -278,7 +455,8 @@
         <div class="bento-card">
           <div class="w-12 h-12 bg-purple-100 rounded-lg mb-4 flex items-center justify-center">
             <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+              <path
+                d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" />
             </svg>
           </div>
           <h3 class="text-xl font-bold mb-2">Support 24/7</h3>
@@ -293,7 +471,8 @@
       <div>
         <h2 class="text-5xl font-bold mb-10 tracking-tighter">Butuh lisensi <br>khusus?</h2>
         <p class="text-gray-400 mb-8">Hubungi kami untuk kebutuhan license yang belum terdaftar di katalog.</p>
-        <a href="https://wa.me/yournumber" class="text-3xl font-bold underline hover:text-gray-400 transition">WhatsApp Admin ↗</a>
+        <a href="https://wa.me/yournumber" class="text-3xl font-bold underline hover:text-gray-400 transition">WhatsApp
+          Admin ↗</a>
       </div>
       <div class="flex flex-col justify-between border-l border-gray-800 pl-0 md:pl-20">
         <div class="space-y-4">
@@ -301,7 +480,9 @@
           <p class="text-xl italic">Jl. Teknologi No. 404,<br>Jakarta Selatan</p>
         </div>
         <div class="pt-10">
-          <p class="text-[10px] text-gray-600">© 2026 S/LAB SOFTWARE STORE. Designed with minimalism.</p>
+          <p class="text-[10px] text-gray-600">© 2026 S/LAB SOFTWARE STORE. Designed with minimalism. <span
+              class="mx-2">•</span> <a href="disclaimer.html" class="hover:text-black transition">Disclaimer & Risk</a>
+          </p>
         </div>
       </div>
     </div>
@@ -314,6 +495,10 @@
         <div>
           <h2 id="modalProductName" class="text-3xl font-bold mb-2">Product Name</h2>
           <p id="modalProductDesc" class="text-gray-600">Product description</p>
+          <a href="disclaimer.html"
+            class="relative z-50 cursor-pointer inline-block mt-3 text-xs font-bold text-red-600 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-100 transition">
+            ⓘ Personal Use Only (Baca Kebijakan)
+          </a>
         </div>
         <button onclick="closeProductModal()" class="text-2xl font-bold text-gray-400 hover:text-gray-600">×</button>
       </div>
@@ -340,13 +525,18 @@
       </div>
 
       <form id="checkoutForm" onsubmit="submitCheckout(event)" class="space-y-4">
-        <input type="text" id="customerName" placeholder="Nama Lengkap" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <input type="email" id="customerEmail" placeholder="Email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <input type="tel" id="customerPhone" placeholder="Nomor WhatsApp" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
-        <button type="submit" class="w-full btn-pill bg-black text-white hover:bg-gray-800 text-center" style="padding: 16px;">Checkout & Hubungi Admin</button>
+        <input type="text" id="customerName" placeholder="Nama Lengkap" required
+          class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+        <input type="email" id="customerEmail" placeholder="Email" required
+          class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+        <input type="tel" id="customerPhone" placeholder="Nomor WhatsApp" required
+          class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black">
+        <button type="submit" class="w-full btn-pill bg-black text-white hover:bg-gray-800 text-center"
+          style="padding: 16px;">Checkout & Hubungi Admin</button>
       </form>
 
-      <p class="text-xs text-gray-400 text-center mt-4">Setelah checkout, admin akan menghubungi Anda via WhatsApp untuk konfirmasi pembayaran dan pengiriman lisensi.</p>
+      <p class="text-xs text-gray-400 text-center mt-4">Setelah checkout, admin akan menghubungi Anda via WhatsApp untuk
+        konfirmasi pembayaran dan pengiriman lisensi.</p>
     </div>
   </div>
 
@@ -415,7 +605,7 @@
           const res = await fetch(location.pathname);
           const html = await res.text();
           swapContent(html, location.pathname);
-        } catch (_) {}
+        } catch (_) { }
       });
     }
   </script>
@@ -492,7 +682,7 @@ No. WhatsApp: ${phone}`;
     }
 
     // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
+    window.addEventListener('click', function (e) {
       const modal = document.getElementById('productModal');
       if (e.target === modal) {
         closeProductModal();
@@ -500,7 +690,7 @@ No. WhatsApp: ${phone}`;
     });
 
     // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         closeProductModal();
       }
